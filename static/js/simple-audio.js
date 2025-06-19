@@ -20,22 +20,38 @@ class SimpleAudioSystem {
     initialize() {
         try {
             // Use existing context if available
-            if (window.sharedAudioContext) {
+            if (window.sharedAudioContext && window.sharedAudioContext.state !== 'closed') {
                 this.audioContext = window.sharedAudioContext;
+                console.log('Using existing audio context');
             } else {
                 this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 window.sharedAudioContext = this.audioContext;
+                console.log('Created new audio context');
+            }
+            
+            // Resume context if suspended
+            if (this.audioContext.state === 'suspended') {
+                this.audioContext.resume();
             }
             
             // Create master gain
-            if (!this.audioContext.masterGainNode) {
+            if (!this.audioContext.masterGainNode || this.audioContext.masterGainNode.context !== this.audioContext) {
                 this.audioContext.masterGainNode = this.audioContext.createGain();
                 this.audioContext.masterGainNode.connect(this.audioContext.destination);
+                console.log('Created new master gain node');
             }
             this.masterGain = this.audioContext.masterGainNode;
             this.masterGain.gain.setValueAtTime(this.masterVolume, this.audioContext.currentTime);
             
-            console.log('Audio system initialized');
+            // Restore existing oscillators if available
+            if (window.sharedOscillators) {
+                this.activeOscillators = window.sharedOscillators;
+                console.log('Restored active oscillators');
+            } else {
+                window.sharedOscillators = this.activeOscillators;
+            }
+            
+            console.log('Audio system initialized, state:', this.audioContext.state);
         } catch (error) {
             console.warn('Audio not available:', error);
         }
@@ -164,15 +180,20 @@ class SimpleAudioSystem {
     }
     
     toggleAmbient(type) {
-        if (!this.audioContext) return;
+        if (!this.audioContext) {
+            console.warn('Audio context not available');
+            return;
+        }
         
         const key = `amb_${type}`;
         if (this.activeOscillators.has(key)) {
             // Stop existing
             this.stopOscillator(key);
-            this.currentPlaying.ambient = this.currentPlaying.ambient === type ? null : this.currentPlaying.ambient;
+            this.currentPlaying.ambient = null;
         } else {
-            // Start ambient layer
+            // Stop other ambient layers first
+            this.stopAllAmbient();
+            // Start new ambient layer
             this.startAmbient(type);
             this.currentPlaying.ambient = type;
         }
@@ -198,50 +219,67 @@ class SimpleAudioSystem {
     }
     
     startAmbient(type) {
-        let config;
-        
-        switch (type) {
-            case 'drone':
-                config = { freq: 55, type: 'sawtooth', volume: 0.08 };
-                break;
-            case 'cosmic':
-                config = { freq: 110, type: 'triangle', volume: 0.06 };
-                break;
-            case 'forest':
-                config = { freq: 220, type: 'sine', volume: 0.04 };
-                break;
-            case 'temple':
-                config = { freq: 440, type: 'sine', volume: 0.03 };
-                break;
+        try {
+            if (this.audioContext.state === 'suspended') {
+                this.audioContext.resume();
+            }
+            
+            let config;
+            
+            switch (type) {
+                case 'drone':
+                    config = { freq: 55, type: 'sawtooth', volume: 0.08 };
+                    break;
+                case 'cosmic':
+                    config = { freq: 110, type: 'triangle', volume: 0.06 };
+                    break;
+                case 'forest':
+                    config = { freq: 220, type: 'sine', volume: 0.04 };
+                    break;
+                case 'temple':
+                    config = { freq: 440, type: 'sine', volume: 0.03 };
+                    break;
+                default:
+                    console.warn('Unknown ambient type:', type);
+                    return;
+            }
+            
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            const filter = this.audioContext.createBiquadFilter();
+            
+            oscillator.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(this.masterGain);
+            
+            oscillator.frequency.setValueAtTime(config.freq, this.audioContext.currentTime);
+            oscillator.type = config.type;
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(config.freq * 3, this.audioContext.currentTime);
+            
+            gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(config.volume, this.audioContext.currentTime + 2);
+            
+            oscillator.start();
+            
+            this.activeOscillators.set(`amb_${type}`, { oscillator, gainNode, filter });
+            console.log(`Started ambient: ${type} at ${config.freq}Hz`);
+        } catch (error) {
+            console.error('Error starting ambient sound:', error);
         }
-        
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        const filter = this.audioContext.createBiquadFilter();
-        
-        oscillator.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(this.masterGain);
-        
-        oscillator.frequency.setValueAtTime(config.freq, this.audioContext.currentTime);
-        oscillator.type = config.type;
-        
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(config.freq * 2, this.audioContext.currentTime);
-        
-        gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(config.volume, this.audioContext.currentTime + 2);
-        
-        oscillator.start();
-        
-        this.activeOscillators.set(`amb_${type}`, { oscillator, gainNode, filter });
     }
     
     stopOscillator(key) {
         const nodes = this.activeOscillators.get(key);
         if (nodes) {
-            nodes.oscillator.stop();
+            try {
+                nodes.oscillator.stop();
+            } catch (e) {
+                // Oscillator may already be stopped
+            }
             this.activeOscillators.delete(key);
+            console.log(`Stopped oscillator: ${key}`);
         }
     }
     
@@ -254,6 +292,15 @@ class SimpleAudioSystem {
         this.currentPlaying.frequency = null;
     }
     
+    stopAllAmbient() {
+        for (const [key] of this.activeOscillators) {
+            if (key.startsWith('amb_')) {
+                this.stopOscillator(key);
+            }
+        }
+        this.currentPlaying.ambient = null;
+    }
+
     stopAll() {
         for (const [key] of this.activeOscillators) {
             this.stopOscillator(key);
