@@ -2,7 +2,9 @@
 
 class PersistentMysticalAudio {
     constructor() {
-        this.audioElements = {};
+        this.audioContext = null;
+        this.oscillators = {};
+        this.gainNodes = {};
         this.isInitialized = false;
         this.masterVolume = 0.3;
         this.currentSettings = {
@@ -12,9 +14,9 @@ class PersistentMysticalAudio {
         };
         
         this.loadSettings();
-        this.createAudioElements();
+        this.initializeAudioContext();
         this.createAudioControls();
-        this.initializeFromSettings();
+        this.setupPagePersistence();
     }
     
     loadSettings() {
@@ -39,6 +41,36 @@ class PersistentMysticalAudio {
             localStorage.setItem('mystical-audio-persistent', JSON.stringify(settings));
         } catch (error) {
             console.warn('Could not save audio settings');
+        }
+    }
+    
+    initializeAudioContext() {
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.masterGain = this.audioContext.createGain();
+            this.masterGain.connect(this.audioContext.destination);
+            this.masterGain.gain.setValueAtTime(this.masterVolume, this.audioContext.currentTime);
+            this.isInitialized = true;
+        } catch (error) {
+            console.warn('Audio context not available:', error);
+        }
+    }
+    
+    setupPagePersistence() {
+        // Store audio state globally to persist across page loads
+        if (!window.mysticalAudioState) {
+            window.mysticalAudioState = {
+                context: this.audioContext,
+                oscillators: {},
+                settings: this.currentSettings,
+                volume: this.masterVolume
+            };
+        } else {
+            // Restore from existing state
+            this.audioContext = window.mysticalAudioState.context;
+            this.oscillators = window.mysticalAudioState.oscillators;
+            this.currentSettings = window.mysticalAudioState.settings;
+            this.masterVolume = window.mysticalAudioState.volume;
         }
     }
     
