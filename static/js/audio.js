@@ -10,19 +10,87 @@ class MysticalAudioManager {
         this.isPlaying = false;
         this.currentFrequency = null;
         this.oscillator = null;
+        this.currentAmbient = null;
+        this.currentBinaural = null;
         
+        // Load saved state
+        this.loadAudioState();
         this.initializeAudio();
         this.createAudioControls();
+        this.setupPageNavigationHandling();
     }
     
     async initializeAudio() {
         try {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.isInitialized = true;
+            
+            // Restore previous audio state if exists
+            if (this.savedState) {
+                this.restoreAudioState();
+            }
+            
             console.log('🎵 Mystical audio system initialized');
         } catch (error) {
             console.warn('Audio context not available:', error);
         }
+    }
+    
+    loadAudioState() {
+        try {
+            const saved = localStorage.getItem('mystical-audio-state');
+            if (saved) {
+                this.savedState = JSON.parse(saved);
+                this.masterVolume = this.savedState.volume || 0.3;
+            }
+        } catch (error) {
+            console.warn('Could not load audio state:', error);
+        }
+    }
+    
+    saveAudioState() {
+        try {
+            const state = {
+                volume: this.masterVolume,
+                currentFrequency: this.currentFrequency,
+                currentAmbient: this.currentAmbient,
+                currentBinaural: this.currentBinaural
+            };
+            localStorage.setItem('mystical-audio-state', JSON.stringify(state));
+        } catch (error) {
+            console.warn('Could not save audio state:', error);
+        }
+    }
+    
+    restoreAudioState() {
+        if (!this.savedState) return;
+        
+        setTimeout(() => {
+            if (this.savedState.currentFrequency) {
+                this.playFrequency(this.savedState.currentFrequency);
+            }
+            if (this.savedState.currentAmbient) {
+                this.playAmbientSound(this.savedState.currentAmbient);
+            }
+            if (this.savedState.currentBinaural) {
+                this.playBinauralBeat(this.savedState.currentBinaural);
+            }
+        }, 500);
+    }
+    
+    setupPageNavigationHandling() {
+        // Override navigation to preserve audio across pages
+        window.addEventListener('beforeunload', () => {
+            this.saveAudioState();
+        });
+        
+        // Handle navigation clicks to maintain audio
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a[href^="/"], .nav-link[href^="/"]');
+            if (link && !link.getAttribute('href').startsWith('#')) {
+                this.saveAudioState();
+            }
+        });
     }
     
     createAudioControls() {
@@ -98,7 +166,14 @@ class MysticalAudioManager {
             this.masterVolume = e.target.value / 100;
             volumeDisplay.textContent = e.target.value + '%';
             this.updateAllVolumes();
+            this.saveAudioState();
         });
+        
+        // Set initial volume from saved state
+        if (this.savedState && this.savedState.volume !== undefined) {
+            volumeSlider.value = this.savedState.volume * 100;
+            volumeDisplay.textContent = Math.round(this.savedState.volume * 100) + '%';
+        }
         
         // Frequency buttons
         document.querySelectorAll('.freq-btn').forEach(btn => {
@@ -106,10 +181,13 @@ class MysticalAudioManager {
                 const freq = e.target.dataset.freq;
                 if (freq === 'stop') {
                     this.stopFrequency();
+                    this.currentFrequency = null;
                 } else {
                     this.playFrequency(parseInt(freq));
+                    this.currentFrequency = parseInt(freq);
                 }
                 this.updateButtonStates('.freq-btn', e.target);
+                this.saveAudioState();
             });
         });
         
@@ -118,7 +196,9 @@ class MysticalAudioManager {
             btn.addEventListener('click', (e) => {
                 const sound = e.target.dataset.sound;
                 this.playAmbientSound(sound);
+                this.currentAmbient = sound;
                 this.updateButtonStates('.ambient-btn', e.target);
+                this.saveAudioState();
             });
         });
         
@@ -127,9 +207,14 @@ class MysticalAudioManager {
             btn.addEventListener('click', (e) => {
                 const beat = e.target.dataset.beat;
                 this.playBinauralBeat(beat);
+                this.currentBinaural = beat;
                 this.updateButtonStates('.binaural-btn', e.target);
+                this.saveAudioState();
             });
         });
+        
+        // Restore button states from saved state
+        this.restoreButtonStates();
     }
     
     updateButtonStates(selector, activeButton) {
@@ -139,6 +224,30 @@ class MysticalAudioManager {
         if (activeButton && activeButton.dataset.freq !== 'stop') {
             activeButton.classList.add('active');
         }
+    }
+    
+    restoreButtonStates() {
+        if (!this.savedState) return;
+        
+        setTimeout(() => {
+            // Restore frequency button state
+            if (this.savedState.currentFrequency) {
+                const freqBtn = document.querySelector(`[data-freq="${this.savedState.currentFrequency}"]`);
+                if (freqBtn) freqBtn.classList.add('active');
+            }
+            
+            // Restore ambient button state
+            if (this.savedState.currentAmbient) {
+                const ambientBtn = document.querySelector(`[data-sound="${this.savedState.currentAmbient}"]`);
+                if (ambientBtn) ambientBtn.classList.add('active');
+            }
+            
+            // Restore binaural button state
+            if (this.savedState.currentBinaural) {
+                const binauralBtn = document.querySelector(`[data-beat="${this.savedState.currentBinaural}"]`);
+                if (binauralBtn) binauralBtn.classList.add('active');
+            }
+        }, 100);
     }
     
     async playFrequency(frequency) {
@@ -440,6 +549,8 @@ class MysticalAudioManager {
             }
         });
         this.ambientSounds = {};
+        this.currentAmbient = null;
+        this.currentBinaural = null;
     }
     
     updateAllVolumes() {

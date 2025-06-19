@@ -264,14 +264,14 @@ class VisualEffectsManager {
         
         // Enhance cursor on hover
         document.addEventListener('mouseenter', (e) => {
-            if (e.target.matches('a, button, .nav-link')) {
+            if (e.target && e.target.matches && e.target.matches('a, button, .nav-link')) {
                 cursor.style.transform = 'scale(2)';
                 cursor.style.background = 'radial-gradient(circle, rgba(186, 85, 211, 0.8) 0%, rgba(186, 85, 211, 0) 70%)';
             }
         });
         
         document.addEventListener('mouseleave', (e) => {
-            if (e.target.matches('a, button, .nav-link')) {
+            if (e.target && e.target.matches && e.target.matches('a, button, .nav-link')) {
                 cursor.style.transform = 'scale(1)';
                 cursor.style.background = 'radial-gradient(circle, rgba(138, 43, 226, 0.6) 0%, rgba(138, 43, 226, 0) 70%)';
             }
@@ -279,55 +279,9 @@ class VisualEffectsManager {
     }
     
     createPageTransitions() {
-        // Add mystical page transition effects
-        const links = document.querySelectorAll('a[href^="/"], .nav-link');
-        
-        links.forEach(link => {
-            link.addEventListener('click', (e) => {
-                const href = link.getAttribute('href');
-                
-                // Skip if it's an anchor link
-                if (href.startsWith('#')) return;
-                
-                e.preventDefault();
-                
-                // Create transition overlay
-                const overlay = document.createElement('div');
-                overlay.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: radial-gradient(circle at center, rgba(138, 43, 226, 0.9) 0%, rgba(10, 10, 10, 0.95) 100%);
-                    z-index: 10000;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    opacity: 0;
-                    transition: opacity 0.5s ease;
-                `;
-                
-                overlay.innerHTML = `
-                    <div style="text-align: center; color: #ba55d3;">
-                        <div style="font-size: 3rem; margin-bottom: 20px;">👁️</div>
-                        <div style="font-size: 1.2rem;">Shifting consciousness...</div>
-                    </div>
-                `;
-                
-                document.body.appendChild(overlay);
-                
-                // Trigger transition
-                setTimeout(() => {
-                    overlay.style.opacity = '1';
-                }, 10);
-                
-                // Navigate after transition
-                setTimeout(() => {
-                    window.location.href = href;
-                }, 800);
-            });
-        });
+        // Disable page transitions to allow continuous audio playback
+        // Audio will now persist across page navigation
+        console.log('Page transitions disabled to maintain audio continuity');
     }
     
     destroy() {
