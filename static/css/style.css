@@ -667,6 +667,189 @@ body {
     }
 }
 
+/* Audio Control Panel */
+.audio-control-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border: 2px solid #8a2be2;
+    border-radius: 15px;
+    z-index: 1000;
+    min-width: 280px;
+    box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.audio-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-bottom: 1px solid #8a2be2;
+    cursor: pointer;
+}
+
+.audio-header i {
+    color: #8a2be2;
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.audio-header span {
+    color: #ba55d3;
+    font-weight: bold;
+    flex-grow: 1;
+}
+
+.panel-toggle {
+    background: none;
+    border: none;
+    color: #8a2be2;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.panel-toggle:hover {
+    color: #ba55d3;
+    transform: scale(1.1);
+}
+
+.audio-content {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.audio-content.collapsed {
+    max-height: 0;
+    padding: 0 20px;
+    overflow: hidden;
+}
+
+.audio-content > div {
+    margin-bottom: 20px;
+}
+
+.audio-content label {
+    display: block;
+    color: #9370db;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.volume-control {
+    display: flex;
+    flex-direction: column;
+}
+
+.volume-control input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+    appearance: none;
+    background: #2a2a2a;
+    border-radius: 5px;
+    height: 6px;
+    outline: none;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8a2be2, #ba55d3);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(138, 43, 226, 0.3);
+}
+
+.volume-control input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8a2be2, #ba55d3);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(138, 43, 226, 0.3);
+}
+
+#volume-display {
+    color: #ba55d3;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.frequency-buttons,
+.ambient-buttons,
+.binaural-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.freq-btn,
+.ambient-btn,
+.binaural-btn {
+    background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+    border: 1px solid #8a2be2;
+    color: #e0e0e0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.freq-btn:hover,
+.ambient-btn:hover,
+.binaural-btn:hover {
+    background: linear-gradient(135deg, #8a2be2 0%, #9932cc 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(138, 43, 226, 0.4);
+}
+
+.freq-btn.active,
+.ambient-btn.active,
+.binaural-btn.active {
+    background: linear-gradient(135deg, #8a2be2 0%, #ba55d3 100%);
+    color: white;
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+}
+
+/* Audio visualization effects */
+@keyframes audioGlow {
+    0%, 100% { box-shadow: 0 0 15px rgba(138, 43, 226, 0.6); }
+    50% { box-shadow: 0 0 25px rgba(186, 85, 211, 0.8); }
+}
+
+.freq-btn.active,
+.ambient-btn.active,
+.binaural-btn.active {
+    animation: audioGlow 2s infinite;
+}
+
+/* Mobile responsiveness for audio panel */
+@media (max-width: 768px) {
+    .audio-control-panel {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+    }
+    
+    .frequency-buttons,
+    .ambient-buttons,
+    .binaural-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Animation Classes */
 .fade-in {
     animation: fadeIn 0.6s ease-in;
