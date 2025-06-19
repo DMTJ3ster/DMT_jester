@@ -49,6 +49,22 @@
                     <i class="fas fa-brain"></i>
                     <span>Interpretations</span>
                 </a>
+                <a href="{{ url_for('animals') }}" class="nav-link {% if request.endpoint == 'animals' %}active{% endif %}">
+                    <i class="fas fa-paw"></i>
+                    <span>Animals</span>
+                </a>
+                <a href="{{ url_for('childhood') }}" class="nav-link {% if request.endpoint == 'childhood' %}active{% endif %}">
+                    <i class="fas fa-child"></i>
+                    <span>Childhood</span>
+                </a>
+                <a href="{{ url_for('rituals') }}" class="nav-link {% if request.endpoint == 'rituals' %}active{% endif %}">
+                    <i class="fas fa-candle-holder"></i>
+                    <span>Rituals</span>
+                </a>
+                <a href="{{ url_for('numerology') }}" class="nav-link {% if request.endpoint == 'numerology' %}active{% endif %}">
+                    <i class="fas fa-calculator"></i>
+                    <span>666 Meaning</span>
+                </a>
             </div>
             
             <div class="nav-toggle" id="nav-toggle">

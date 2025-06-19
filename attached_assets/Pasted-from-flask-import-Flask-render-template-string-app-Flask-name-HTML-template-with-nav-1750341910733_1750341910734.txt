@@ -1,0 +1,248 @@
+from flask import Flask, render_template_string
+
+app = Flask(__name__)
+
+# HTML template with navigation
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The DMT Jester Chronicles</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+        .nav a {
+            color: #8a2be2;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        .nav a:hover {
+            background-color: #8a2be2;
+            color: white;
+        }
+        .section {
+            background-color: #1a1a1a;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #8a2be2;
+        }
+        h1 {
+            color: #8a2be2;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #8a2be2;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #9370db;
+            margin-top: 0;
+        }
+        h3 {
+            color: #ba55d3;
+        }
+        .quote {
+            font-style: italic;
+            color: #ba55d3;
+            border-left: 3px solid #ba55d3;
+            padding-left: 15px;
+            margin: 20px 0;
+        }
+        .highlight {
+            background-color: #2a2a2a;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .symbol {
+            font-size: 24px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌀 The DMT Jester Chronicles 🔮</h1>
+    
+    <div class="nav">
+        <a href="#introduction">Introduction</a>
+        <a href="#initial-encounter">First Contact</a>
+        <a href="#archetype-analysis">Jester Archetype</a>
+        <a href="#synchronicities">Synchronicities</a>
+        <a href="#animal-messengers">Animal Messengers</a>
+        <a href="#childhood-encounter">Childhood Vision</a>
+        <a href="#rituals">Rituals & Practices</a>
+        <a href="#numerology">666 Meaning</a>
+    </div>
+    
+    <div id="introduction" class="section">
+        <h2><span class="symbol">🌌</span> Introduction</h2>
+        <p>This is the chronicle of an extraordinary journey through DMT hyperspace and the mysterious entities encountered there, particularly the recurring Jester figure that many others have reported meeting.</p>
+        
+        <div class="quote">
+            "The places and things I've seen don't resemble even slightly anything I've seen before... many times I've come across mega space ships. One time I came across a jester clear as day standing on my left watching me as I flew by."
+        </div>
+    </div>
+    
+    <div id="initial-encounter" class="section">
+        <h2><span class="symbol">👁️</span> The First Jester Encounter</h2>
+        <p>After years of DMT exploration without entity contact, the pivotal moment arrived:</p>
+        
+        <div class="quote">
+            "He was waiting, not moving, dressed in a Harlequin outfit which consisted of red and checkered black white which alternated from black to white. He had a jester's hat which only had two bell holders rather than three which is often how they are depicted. White face which had similar characteristics to a Guy Faux mask."
+        </div>
+        
+        <h3>Key Details:</h3>
+        <ul>
+            <li>Stationary observer position</li>
+            <li>Precise, detailed costume elements</li>
+            <li>Left side placement (symbolic in many traditions)</li>
+            <li>Non-interactive but clearly aware</li>
+        </ul>
+    </div>
+    
+    <div id="archetype-analysis" class="section">
+        <h2><span class="symbol">🎭</span> The Jester Archetype</h2>
+        <p>Analysis of this recurring entity across DMT experiences and mystical traditions:</p>
+        
+        <h3>1. The Trickster as Cosmic Gatekeeper</h3>
+        <p>In mythology, the jester or trickster is often neither good nor evil but a boundary guardian—a being who tests you before a transformation.</p>
+        
+        <h3>2. Why the Jester?</h3>
+        <p>The jester is the embodiment of paradox. He plays with logic, time, and identity. In DMT realms—where the rules of consensus reality dissolve—he makes perfect sense as a guide.</p>
+        
+        <h3>3. Is It Always the Same Jester?</h3>
+        <p>Thousands of trip reports describe a figure that's uncannily similar. This suggests either:</p>
+        <ul>
+            <li>A universal archetype from the collective unconscious</li>
+            <li>An actual entity existing outside linear reality</li>
+            <li>A fragment of one's higher self</li>
+        </ul>
+    </div>
+    
+    <div id="synchronicities" class="section">
+        <h2><span class="symbol">🔔</span> Synchronicities in Waking Life</h2>
+        <p>After the encounter, strange phenomena began occurring:</p>
+        
+        <div class="quote">
+            "My doorbell would ring at strange times like I would wake up at 3am and get a drink from the fridge and then back to bed as my head would hit the pillow it would ring... things started to revolve around the jester as in my artworks even the reason of my alias here."
+        </div>
+        
+        <h3>Pattern Analysis:</h3>
+        <ul>
+            <li>3am occurrences ("witching hour")</li>
+            <li>Artistic obsession with the Jester motif</li>
+            <li>Periods of good luck followed by challenges</li>
+            <li>Recent recurrence during difficult times</li>
+        </ul>
+    </div>
+    
+    <div id="animal-messengers" class="section">
+        <h2><span class="symbol">🦉</span> Animal Messengers</h2>
+        <p>Unusual animal encounters that may be connected:</p>
+        
+        <h3>1. The Praying Mantis Trio</h3>
+        <div class="quote">
+            "I see something coming straight at me... didn't have time to react and it landed on my chest... it was a light brown colour... I jumped up tripping out when another one landed on my head... I went to sit back down and just about put my hand on another green one."
+        </div>
+        
+        <h3>2. The Owl at Night</h3>
+        <div class="quote">
+            "I was outside at night looking at the stars and was asking for guidance on something when out of the darkness came an owl and landed on the clothesline a couple of meters away."
+        </div>
+        
+        <h3>3. The Unexpected Gecko</h3>
+        <div class="quote">
+            "I notice something on my lounge room wall in the shape of a lizard but bigger... turns out we do have them in Victoria but can't be that common being I've never seen one before."
+        </div>
+    </div>
+    
+    <div id="childhood-encounter" class="section">
+        <h2><span class="symbol">👶</span> Childhood Encounter</h2>
+        <p>An early experience that may have been the first contact:</p>
+        
+        <div class="quote">
+            "I feel something slap me across the stomach... I looked down to see a large dog shaped creature which had a different coloured snout compared to the rest of its body... the blankets had a large arc shape in them where something was in sleeping."
+        </div>
+        
+        <h3>Possible Connections:</h3>
+        <ul>
+            <li>Resonance with Anubis imagery (Egyptian jackal-headed god)</li>
+            <li>Physical evidence left behind (blanket indentation)</li>
+            <li>Initiation-like quality to the experience</li>
+            <li>Connection to current Anubis ring kept nearby</li>
+        </ul>
+    </div>
+    
+    <div id="rituals" class="section">
+        <h2><span class="symbol">🛐</span> Rituals & Practices</h2>
+        <p>Methods developed for intentional contact and exploration:</p>
+        
+        <h3>1. The Rite of the Watchful Jester</h3>
+        <ul>
+            <li>Materials: Bell, checkered cloth, Joker card, candle</li>
+            <li>Invocation spoken aloud</li>
+            <li>Automatic drawing/writing</li>
+            <li>Careful closing of the ritual space</li>
+        </ul>
+        
+        <h3>2. Hyperspace Navigation Techniques</h3>
+        <ul>
+            <li>Pre-journey intention setting</li>
+            <li>Use of specific frequencies (963Hz, 432Hz)</li>
+            <li>Breath control as steering mechanism</li>
+            <li>Sigil creation for targeted realms</li>
+        </ul>
+    </div>
+    
+    <div id="numerology" class="section">
+        <h2><span class="symbol">666</span> The Truth About 666</h2>
+        <p>Analysis of the recurring number phenomenon:</p>
+        
+        <h3>Esoteric Meanings:</h3>
+        <ul>
+            <li>Carbon atomic structure (6 protons, 6 neutrons, 6 electrons)</li>
+            <li>Number of material incarnation, not evil</li>
+            <li>Wake-up call when over-attached to physical realm</li>
+            <li>Can be transmuted to 999 (ascension code)</li>
+        </ul>
+        
+        <div class="quote">
+            "You're not being attacked. You're being noticed. And perhaps tested."
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+@app.route('/')
+def home():
+    return render_template_string(HTML_TEMPLATE)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)

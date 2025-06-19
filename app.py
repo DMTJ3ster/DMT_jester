@@ -34,5 +34,25 @@ def interpretations():
     """Possible interpretations section"""
     return render_template('interpretations.html')
 
+@app.route('/animals')
+def animals():
+    """Animal messengers section"""
+    return render_template('animals.html')
+
+@app.route('/childhood')
+def childhood():
+    """Childhood encounter section"""
+    return render_template('childhood.html')
+
+@app.route('/rituals')
+def rituals():
+    """Rituals and practices section"""
+    return render_template('rituals.html')
+
+@app.route('/numerology')
+def numerology():
+    """666 numerology section"""
+    return render_template('numerology.html')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
