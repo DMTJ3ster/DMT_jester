@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}DMT & The Jester Experience - Home{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">
+            <i class="fas fa-eye mystical-eye"></i>
+            DMT & The Jester Experience
+        </h1>
+        <p class="hero-subtitle">A journey through consciousness and interdimensional encounters</p>
+        
+        <div class="hero-description">
+            <p>Explore the mystical realms accessed through DMT, where reality bends and entities reveal themselves. This is a documentation of encounters with the archetypal Jester - a cosmic trickster who guards the boundaries between worlds.</p>
+        </div>
+        
+        <div class="hero-actions">
+            <a href="{{ url_for('story') }}" class="btn btn-primary">
+                <i class="fas fa-book-open"></i>
+                Begin the Journey
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="overview-section">
+    <div class="container">
+        <h2 class="section-title">Journey Through the Experience</h2>
+        
+        <div class="overview-grid">
+            <div class="overview-card">
+                <div class="card-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3>The Story</h3>
+                <p>The beginning of exploration into DMT realms and the search for entity contact.</p>
+                <a href="{{ url_for('story') }}" class="card-link">
+                    Read More <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="overview-card">
+                <div class="card-icon">
+                    <i class="fas fa-mask"></i>
+                </div>
+                <h3>The Encounter</h3>
+                <p>The moment of first contact with the Jester entity in vivid detail.</p>
+                <a href="{{ url_for('encounter') }}" class="card-link">
+                    Read More <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="overview-card">
+                <div class="card-icon">
+                    <i class="fas fa-theater-masks"></i>
+                </div>
+                <h3>The Archetype</h3>
+                <p>Understanding the Jester as a universal trickster figure across cultures.</p>
+                <a href="{{ url_for('archetype') }}" class="card-link">
+                    Read More <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="overview-card">
+                <div class="card-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3>Synchronicities</h3>
+                <p>Strange occurrences in waking life following the encounter.</p>
+                <a href="{{ url_for('synchronicities') }}" class="card-link">
+                    Read More <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="overview-card">
+                <div class="card-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Interpretations</h3>
+                <p>Possible meanings and theories about these interdimensional experiences.</p>
+                <a href="{{ url_for('interpretations') }}" class="card-link">
+                    Read More <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="quote-section">
+    <div class="container">
+        <blockquote class="mystical-quote">
+            <i class="fas fa-quote-left quote-icon"></i>
+            <p>"The places and things I've seen don't resemble even slightly anything I've seen before..."</p>
+            <footer>- The Explorer</footer>
+        </blockquote>
+    </div>
+</div>
+{% endblock %}

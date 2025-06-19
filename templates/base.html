@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DMT & The Jester Experience{% endblock %}</title>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="{{ url_for('index') }}">
+                    <i class="fas fa-eye"></i>
+                    <span>DMT Experience</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{{ url_for('story') }}" class="nav-link {% if request.endpoint == 'story' %}active{% endif %}">
+                    <i class="fas fa-book-open"></i>
+                    <span>The Story</span>
+                </a>
+                <a href="{{ url_for('encounter') }}" class="nav-link {% if request.endpoint == 'encounter' %}active{% endif %}">
+                    <i class="fas fa-mask"></i>
+                    <span>Encounter</span>
+                </a>
+                <a href="{{ url_for('archetype') }}" class="nav-link {% if request.endpoint == 'archetype' %}active{% endif %}">
+                    <i class="fas fa-theater-masks"></i>
+                    <span>Archetype</span>
+                </a>
+                <a href="{{ url_for('synchronicities') }}" class="nav-link {% if request.endpoint == 'synchronicities' %}active{% endif %}">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Synchronicities</span>
+                </a>
+                <a href="{{ url_for('interpretations') }}" class="nav-link {% if request.endpoint == 'interpretations' %}active{% endif %}">
+                    <i class="fas fa-brain"></i>
+                    <span>Interpretations</span>
+                </a>
+            </div>
+            
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 DMT & The Jester Experience. A journey through consciousness.</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">
+                    <i class="fas fa-infinity"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
