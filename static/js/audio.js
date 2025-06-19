@@ -1,19 +1,34 @@
 // DMT & The Jester Experience - Audio System
 
+// Global audio context that persists across pages
+if (!window.mysticalAudioContext) {
+    window.mysticalAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    window.mysticalAudioNodes = {};
+    window.mysticalAudioState = {
+        masterVolume: 0.3,
+        currentFrequency: null,
+        currentAmbient: null,
+        currentBinaural: null
+    };
+}
+
 class MysticalAudioManager {
     constructor() {
-        this.audioContext = null;
+        this.audioContext = window.mysticalAudioContext;
+        this.audioNodes = window.mysticalAudioNodes;
+        this.audioState = window.mysticalAudioState;
+        
         this.isInitialized = false;
         this.currentTrack = null;
-        this.ambientSounds = {};
-        this.masterVolume = 0.3;
+        this.ambientSounds = this.audioNodes;
+        this.masterVolume = this.audioState.masterVolume;
         this.isPlaying = false;
-        this.currentFrequency = null;
-        this.oscillator = null;
-        this.currentAmbient = null;
-        this.currentBinaural = null;
+        this.currentFrequency = this.audioState.currentFrequency;
+        this.oscillator = this.audioNodes.oscillator;
+        this.currentAmbient = this.audioState.currentAmbient;
+        this.currentBinaural = this.audioState.currentBinaural;
         
-        // Load saved state
+        // Load saved state from localStorage
         this.loadAudioState();
         this.initializeAudio();
         this.createAudioControls();
